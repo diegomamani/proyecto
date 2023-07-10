@@ -4,6 +4,17 @@
 <xacro:include filename="$(find robot_proyecto_description)/urdf/materials.xacro" />
 <xacro:include filename="$(find robot_proyecto_description)/urdf/robot_proyecto.trans" />
 <xacro:include filename="$(find robot_proyecto_description)/urdf/robot_proyecto.gazebo" />
+
+
+
+
+<link name="world" />
+
+<joint name="world_to_base_link=" type="fixed">
+     <parent link="world"/>
+     <child link="base_link"/>
+</joint>
+
 <link name="base_link">
   <inertial>
     <origin xyz="-3.0643350533575795e-15 -5.81835769624857e-17 0.018608735782155033" rpy="0 0 0"/>
@@ -13,14 +24,14 @@
   <visual>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/base_link.stl" />
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/base_link.stl" />
     </geometry>
   </collision>
 </link>
@@ -34,14 +45,14 @@
   <visual>
     <origin xyz="0.0 -0.0 -0.116" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link2_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link2_1.stl"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="0.0 -0.0 -0.116" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link2_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link2_1.stl"/>
     </geometry>
   </collision>
 </link>
@@ -55,14 +66,14 @@
   <visual>
     <origin xyz="-0.0 0.005 -0.311" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link3_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link3_1.stl"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="-0.0 0.005 -0.311" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link3_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link3_1.stl"/>
     </geometry>
   </collision>
 </link>
@@ -76,14 +87,14 @@
   <visual>
     <origin xyz="-0.0 -0.025 -0.338" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link4_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link4_1.stl"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="-0.0 -0.025 -0.338" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link4_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link4_1.stl"/>
     </geometry>
   </collision>
 </link>
@@ -97,14 +108,14 @@
   <visual>
     <origin xyz="-0.0 -0.203 -0.337766" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link5_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link5_1.stl"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="-0.0 -0.203 -0.337766" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link5_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link5_1.stl"/>
     </geometry>
   </collision>
 </link>
@@ -118,14 +129,14 @@
   <visual>
     <origin xyz="-0.0 -0.228 -0.338" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link6_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link6_1.stl"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="-0.0 -0.228 -0.338" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link6_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link6_1.stl"/>
     </geometry>
   </collision>
 </link>
@@ -139,14 +150,14 @@
   <visual>
     <origin xyz="-0.0 -0.0 -0.05" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link1_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link1_1.stl"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
     <origin xyz="-0.0 -0.0 -0.05" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="package://robot_proyecto_description/meshes/link1_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="package://robot_proyecto_description/meshes/link1_1.stl"/>
     </geometry>
   </collision>
 </link>
