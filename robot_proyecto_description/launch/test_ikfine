@@ -7,29 +7,28 @@ from markers import *
 from proyectofunctions import *
 
 if __name__ == '__main__':
-
     rospy.init_node("testInvKine")
     pub = rospy.Publisher('joint_states', JointState, queue_size=1000)
 
-    bmarker      = BallMarker(color['RED'])
-    bmarker_des  = BallMarker(color['GREEN'])
+    bmarker = BallMarker(color['RED'])
+    bmarker_des = BallMarker(color['GREEN'])
 
     # Joint names
-    jnames = ['revo_1', 'revo_2', 'revo_3','revo_4', 'revo_5', 'revo_6']
+    jnames = ['revo_1', 'revo_2', 'revo_3', 'revo_4', 'revo_5', 'revo_6']
 
     # Desired position
-    xd = np.array([0.84, 0.125, 0.249])
+    xd = np.array([0.15, 0.125, 0.425])
     # Initial configuration
-    q0 = np.array([0.0, 0.5, -0.5, 0.0, 0.0, 0.0])
+    q0 = np.array([0.0, 0, 0, 0.0, 0.0, 0.0])
     # Inverse kinematics
     q = ikine(xd, q0)
 
     # Resulting position (end effector with respect to the base link)
     T = fkine(q)
-    print('Obtained value:\n', np.round(T,3))
+    print('Obtained value:\n', np.round(T, 3))
 
     # Red marker shows the achieved position
-    bmarker.xyz(T[0:3,3])
+    bmarker.xyz(T[0:3, 3])
     # Green marker shows the desired position
     bmarker_des.xyz(xd)
 
@@ -43,7 +42,7 @@ if __name__ == '__main__':
 
     # Loop rate (in Hz)
     rate = rospy.Rate(100)
-    
+
     # Continuous execution loop
     while not rospy.is_shutdown():
         # Current time (needed for ROS)

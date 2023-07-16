@@ -14,23 +14,22 @@ if __name__ == '__main__':
     pub = rospy.Publisher('joint_states', JointState, queue_size=10)
     
     # Files for the logs
-    fxcurrent = open("/tmp/xcurrent.txt", "w")
-    fxdesired = open("/tmp/xdesired.txt", "w")
-    fq = open("/tmp/q.txt", "w")
+    fxcurrent = open("/home/user/lab_ws/src/xcurrent.txt", "w")
+    fxdesired = open("/home/user/lab_ws/src/xdesired.txt", "w")
+    fq = open("/home/user/lab_ws/src/q.txt", "w")
 
     # Markers for the current and desired positions
     bmarker_current = BallMarker(color['RED'])
     bmarker_desired = BallMarker(color['GREEN'])
 
     # Joint names
-    jnames = ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint',
-              'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint']
+    jnames = ['revo_1', 'revo_2', 'revo_3','revo_4', 'revo_5', 'revo_6']
 
     # Desired position
-    xd = np.array([0.48, 0.4, 0.4491])
+    xd = np.array([0.25, 0.2, 0.3891])
 
     # Initial configuration
-    q0 = np.array([0.0, 0.5, -0.5, 0, 0, 0.0])
+    q0 = np.array([0.0, 0, 0, 0, 0, 0.0])
 
     # Resulting initial position (end effector with respect to the base link)
     T = fkine(q0)
@@ -47,7 +46,7 @@ if __name__ == '__main__':
     jstate.position = q0
 
     # Frequency (in Hz) and control period
-    freq = 200
+    freq = 20
     dt = 1.0 / freq
     rate = rospy.Rate(freq)
 
@@ -96,3 +95,4 @@ if __name__ == '__main__':
     fxcurrent.close()
     fxdesired.close()
     fq.close()
+

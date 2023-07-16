@@ -14,7 +14,7 @@ if __name__ == '__main__':
   # Joint names
   jnames = ['revo_1', 'revo_2', 'revo_3','revo_4', 'revo_5', 'revo_6']
   # Joint Configuration
-  q = [0, 1.5, 1.5, 0, 0, 0]
+  q =  [0.7, 0.5, -0.6, 0.3, 0, 0]
 
   # End effector with respect to the base
   T = fkine(q)
@@ -30,7 +30,7 @@ if __name__ == '__main__':
   jstate.position = q
 
   # Loop rate (in Hz)
-  rate = rospy.Rate(20)
+  rate = rospy.Rate(600)
   # Continuous execution loop
   while not rospy.is_shutdown():
     # Current time (needed for ROS)
