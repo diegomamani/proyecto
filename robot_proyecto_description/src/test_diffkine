@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+
+import rospy
+from sensor_msgs.msg import JointState
+from markers import *
+from proyectofunctions import *
+
+if __name__ == '__main__':
+    # Initialize the node
+    rospy.init_node("testKineControlPosition")
+    print('starting motion ... ')
+    
+    # Publisher: publish to the joint_states topic
+    pub = rospy.Publisher('joint_states', JointState, queue_size=10)
+    
+    # Files for the logs
+    fxcurrent = open("/home/user/lab_ws/src/xcurrent.txt", "w")
+    fxdesired = open("/home/user/lab_ws/src/xdesired.txt", "w")
+    fq = open("/home/user/lab_ws/src/q.txt", "w")
+
+    # Markers for the current and desired positions
+    bmarker_current = BallMarker(color['RED'])
+    bmarker_desired = BallMarker(color['GREEN'])
+
+    # Joint names
+    jnames = ['revo_1', 'revo_2', 'revo_3','revo_4', 'revo_5', 'revo_6']
+
+    # Desired position
+    xd = np.array([0.25, 0.2, 0.3891])
+
+    # Initial configuration
+    q0 = np.array([0.0, 0, 0, 0, 0, 0.0])
+
+    # Resulting initial position (end effector with respect to the base link)
+    T = fkine(q0)
+    x0 = T[0:3, 3]
+
+    # Set current and desired position markers
+    bmarker_current.xyz(x0)
+    bmarker_desired.xyz(xd)
+
+    # Instance of the JointState message
+    jstate = JointState()
+    jstate.header.stamp = rospy.Time.now()
+    jstate.name = jnames
+    jstate.position = q0
+
+    # Frequency (in Hz) and control period
+    freq = 20
+    dt = 1.0 / freq
+    rate = rospy.Rate(freq)
+
+    # Initial joint configuration
+    q = np.copy(q0)
+
+    while not rospy.is_shutdown():
+        # Current time (needed for ROS)
+        jstate.header.stamp = rospy.Time.now()
+
+        # Kinematic control law for position
+        JACOBIANO = jacobian_position(q)
+        T_x = fkine(q)
+        x = T_x[0:3, 3]
+
+        # Calculate control law
+        error = x - xd
+        K = 0.5
+        e_p = -K * error
+        q_p = np.dot(np.linalg.pinv(JACOBIANO), e_p)
+
+        # Integration using Euler's method to obtain the joint position
+        q = q + dt * q_p
+        e_n = np.linalg.norm(error)
+        epsilon = 0.00001
+
+        if e_n < epsilon:
+            break
+
+        # Log values
+        fxcurrent.write(str(x[0]) + ' ' + str(x[1]) + ' ' + str(x[2]) + '\n')
+        fxdesired.write(str(xd[0]) + ' ' + str(xd[1]) + ' ' + str(xd[2]) + '\n')
+        fq.write(str(q[0]) + " " + str(q[1]) + " " + str(q[2]) + " " +
+                 str(q[3]) + " " + str(q[4]) + " " + str(q[5]) + "\n")
+
+        # Publish the message
+        jstate.position = q
+        pub.publish(jstate)
+        bmarker_desired.xyz(xd)
+        bmarker_current.xyz(x)
+
+        # Wait for the next iteration
+        rate.sleep()
+
+    print('ending motion ...')
+    fxcurrent.close()
+    fxdesired.close()
+    fq.close()
+

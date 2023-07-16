@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+
+import rospy
+from sensor_msgs.msg import JointState
+from markers import *
+from proyectofunctions import *
+
+if __name__ == '__main__':
+    # Initialize the node
+    rospy.init_node("testKineControlPose")
+    print('starting motion ... ')
+    
+    # Publisher: publish to the joint_states topic
+    pub = rospy.Publisher('joint_states', JointState, queue_size=1000)
+    
+    # Markers for the current and desired positions
+    bmarker_current = FrameMarker()
+    bmarker_desired = FrameMarker(0.5)
+
+    # Joint names
+    jnames = ['revo_1', 'revo_2', 'revo_3', 'revo_4', 'revo_5', 'revo_6']
+
+    # Desired pose
+    ang = pi/3
+    Rd = np.array([[0,1,0],[1,0,0],[0,0,-1]])
+    qd = rot2quat(Rd)
+    xd = np.array([0.4, 0.4, 0.4, qd[0], qd[1], qd[2], qd[3]])
+
+    # Initial configuration
+    q0 = np.array([0.0, 0.5, -0.5, 0, 0, 0.0])
+
+    # Resulting initial pose (end effector with respect to the base link)
+    T = fkine(q0)
+    x0 = TF2xyzquat(T)
+
+    # Set current and desired pose markers
+    bmarker_current.setPose(x0)
+    bmarker_desired.setPose(xd)
+
+    # Instance of the JointState message
+    jstate = JointState()
+    jstate.header.stamp = rospy.Time.now()
+    jstate.name = jnames
+    jstate.position = q0
+
+    # Frequency (in Hz) and control period
+    freq = 200
+    dt = 1.0 / freq
+    rate = rospy.Rate(freq)
+
+    # Initialize variables
+    q = np.copy(q0)
+    x = np.copy(x0)
+    quat = x[3:7]
+    derror = np.zeros(7)
+
+    while not rospy.is_shutdown():
+        jstate.header.stamp = rospy.Time.now()
+
+        # Calculate kinematic control law for the pose
+        T = fkine(q)
+        JACOBIANO = jacobian_pose(q)
+        COOR_QUARTER = TF2xyzquat(T)
+
+        qdT = qd[1:4].T
+        W_error = qd[0] * COOR_QUARTER[3] + qdT.dot(COOR_QUARTER[4:7])
+        E_error = -qd[0] * COOR_QUARTER[4:7] + COOR_QUARTER[3] * qd[1:4] - np.cross(qd[1:4], COOR_QUARTER[4:7])
+        W_error_expand = W_error - 1
+        E0 = np.hstack((W_error_expand, E_error))
+
+        X = COOR_QUARTER[0:3]
+        A = X - xd[0:3]
+        E_FINAL = np.hstack((A, E0))
+
+        # Control law
+        K = 1
+        e_p = -K * E_FINAL
+        q_p = np.dot(np.linalg.pinv(JACOBIANO), e_p)
+
+        # Integration using Euler's method to obtain the joint position
+        q = q + dt * q_p
+        e_n = np.linalg.norm(e_p)
+        epsilon = 0.50000001
+        if e_n < epsilon:
+            break
+        
+        # Update current configuration and publish the message
+        T = fkine(q)
+        x = TF2xyzquat(T)
+        jstate.position = q
+        pub.publish(jstate)
+
+        # Update marker poses
+        bmarker_desired.setPose(xd)
+        bmarker_current.setPose(x)
+        
+        rate.sleep()
